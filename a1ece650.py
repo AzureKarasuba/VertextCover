@@ -38,6 +38,11 @@ def removeStreet(oldStreets, sToBeRemoved):
             newStreets.append(s)
     return newStreets
 
+def turnToTuple(stringName):
+    stripParenthesis = stringName.strip('()')
+    number = stripParenthesis.split(',')
+    return tuple(map(int,number))
+
 def read():
 
     # create a list of Street
@@ -70,7 +75,7 @@ def read():
                     s = Street(streetName)
 
                     for x in coordinates[:-1]:
-                        sp = StreetPart(tuple(x),tuple(coordinates[coordinates.index(x)+1]))
+                        sp = StreetPart(turnToTuple(x),turnToTuple(coordinates[coordinates.index(x)+1]))
                         s.append(sp)
                     streets.append(s)
 
@@ -82,7 +87,7 @@ def read():
                     # the street to be modified
                     s = Street(streetName)
                     for x in coordinates[:-1]:
-                        sp = StreetPart(tuple([x]), tuple([coordinates[coordinates.index(x) + 1]]))
+                        sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
                         s.append(sp)
                     streets.append(s)
 
