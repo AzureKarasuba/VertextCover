@@ -4,8 +4,10 @@ import re
 # YOUR CODE GOES HERE
 
 class StreetPart:
+    end1 = ()
+    end2 = ()
     # This class is used to store parts of streets that are separated by vertices
-    def __init__(self,end1,end2,intersect = []):
+    def __init__(self, end1, end2, intersect = []):
         self.intersect = None
         self.end1 = end1
         self.end2 = end2
@@ -42,6 +44,30 @@ def turnToTuple(stringName):
     stripParenthesis = stringName.strip('()')
     number = stripParenthesis.split(',')
     return tuple(map(int,number))
+
+def checkIntersect(sp1,sp2):
+
+    sp1end1_x = sp1.end1[0]
+    sp1end1_y = sp1.end1[1]
+    sp1end2_x = sp1.end2[0]
+    sp1end2_y = sp1.end2[1]
+
+    sp2end1_x = sp2.end1[0]
+    sp2end1_y = sp2.end1[1]
+    sp2end2_x = sp2.end2[0]
+    sp2end2_y = sp2.end2[1]
+
+    denominator = (sp2end2_y - sp2end1_y) * (sp1end2_x - sp1end1_x) - (sp2end2_x - sp2end1_x) * (sp1end2_y - sp1end1_y)
+    if denominator == 0:
+        return None
+
+    u_sp1 = ((sp2end2_x - sp2end1_x) * (sp1end1_y - sp2end1_y) - (sp2end2_y - sp2end1_y) * (sp1end1_x - sp2end1_x))/ denominator
+    u_sp2 = ((sp1end2_x - sp1end1_x) * (sp1end1_y - sp2end1_y) - (sp1end2_y - sp1end1_y) * (sp1end1_x - sp2end1_x))/ denominator
+
+    if (u_sp1 < 0 or u_sp1 > 1) or (u_sp2 < 0 or u_sp2 > 1):
+        return None
+
+    return sp1end1_x + u_sp1 * (sp1end2_x - sp1end1_x), sp1end1_y + u_sp1 * (sp1end2_y - sp1end1_y)
 
 def read():
 
@@ -107,7 +133,13 @@ def main():
     ### make sure to remove all spurious print statements as required
     ### by the assignment
 
-    read()
+    #read()
+    sp1 = StreetPart((0,0), (0,10))
+    sp2 = StreetPart((4,2), (4,8))
+
+    print(checkIntersect(sp1,sp2))
+
+
 
     # return exit code 0 on successful termination
     sys.exit(0)
