@@ -4,10 +4,11 @@ import re
 # YOUR CODE GOES HERE
 
 class StreetPart:
+    intersect = None
     end1 = ()
     end2 = ()
     # This class is used to store parts of streets that are separated by vertices
-    def __init__(self, end1, end2, intersect = []):
+    def __init__(self, end1, end2):
         self.intersect = None
         self.end1 = end1
         self.end2 = end2
@@ -20,15 +21,21 @@ class StreetPart:
 
 class Street:
     # This class refers to the Street as a whole
-    def __init__(self,name):
-        self.partList = []
+    spList = []
+    name = ""
+
+    def __init__(self, name):
+        self.spList = []
         self.name = name
     
-    def append(self,sp):
-        self.partList.append(sp)
+    def append(self, sp):
+        self.spList.append(sp)
+
+    def getSP(self):
+        return self.spList
 
     def __str__(self):
-        return str(self.partList)
+        return str(self.spList)
 
 
 def removeStreet(oldStreets, sToBeRemoved):
@@ -39,6 +46,22 @@ def removeStreet(oldStreets, sToBeRemoved):
         if (s.name != sToBeRemoved):
             newStreets.append(s)
     return newStreets
+
+def removeVertices(oldVertices, sToBeRemoved):
+
+    print("old Vertices: " + str(oldVertices))
+
+    targetSPs = sToBeRemoved.getSP()
+    targetVertices = []
+
+    for sp in targetSPs:
+        targetVertices.append(sp.end1)
+    targetVertices.append(targetSPs[-1].end2)
+
+    print("target: " + str(targetVertices))
+
+    return [x for x in oldVertices if x not in targetVertices]
+
 
 def turnToTuple(stringName):
     stripParenthesis = stringName.strip('()')
@@ -67,11 +90,18 @@ def checkIntersect(sp1,sp2):
     if (u_sp1 < 0 or u_sp1 > 1) or (u_sp2 < 0 or u_sp2 > 1):
         return None
 
+    intersect = sp1end1_x + u_sp1 * (sp1end2_x - sp1end1_x), sp1end1_y + u_sp1 * (sp1end2_y - sp1end1_y)
+
+    #
+    sp1.addIntersect(intersect)
+    sp2.addIntersect(intersect)
+
     return sp1end1_x + u_sp1 * (sp1end2_x - sp1end1_x), sp1end1_y + u_sp1 * (sp1end2_y - sp1end1_y)
 
 def read():
 
     # create a list of Street
+    vertices = []
     streets = []
     while True:
         line = sys.stdin.readline()
@@ -91,7 +121,16 @@ def read():
 
             if(command == 'r'):
                 print ("entered R!")
+
+                targetStreet = None
+                for x in streets:
+                    if x.name == streetName:
+                        targetStreet = x
+                        break
+
+                vertices = removeVertices(vertices, targetStreet)
                 streets = removeStreet(streets, streetName)
+
             else:
                 lineWithoutName = line.split("\"" + streetName + "\"")
                 coordinates = lineWithoutName[1].split()
@@ -103,11 +142,24 @@ def read():
                     for x in coordinates[:-1]:
                         sp = StreetPart(turnToTuple(x),turnToTuple(coordinates[coordinates.index(x)+1]))
                         s.append(sp)
+                        vertices.append(turnToTuple(x))
+
+                    vertices.append(turnToTuple(coordinates[-1]))
                     streets.append(s)
 
                 elif command == 'c':
                     print("entered C!")
+
+                    targetStreet = None
+                    for x in streets:
+                        if x.name == streetName:
+                            targetStreet = x
+                            break
+
+                    vertices = removeVertices(vertices, targetStreet)
                     streets = removeStreet(streets,streetName)
+
+
                     if(streets == []):
                         print ("\nStreets is now empty!\n")
                     # the street to be modified
@@ -115,14 +167,16 @@ def read():
                     for x in coordinates[:-1]:
                         sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
                         s.append(sp)
+                        vertices.append(turnToTuple(x))
+
+                    vertices.append(turnToTuple(coordinates[-1]))
                     streets.append(s)
 
             print('read a line:', line)
     print('Finished reading input')
-    for s in streets:
-        print(s.name)
-        for sp in s.partList:
-            print (sp.end1)
+
+    for x in vertices:
+        print(x)
 
 def main():
 
@@ -133,11 +187,11 @@ def main():
     ### make sure to remove all spurious print statements as required
     ### by the assignment
 
-    #read()
-    sp1 = StreetPart((0,0), (0,10))
-    sp2 = StreetPart((4,2), (4,8))
+    read()
+    #sp1 = StreetPart((0,0), (0,10))
+    #sp2 = StreetPart((4,2), (4,8))
 
-    print(checkIntersect(sp1,sp2))
+    #print(checkIntersect(sp1,sp2))
 
 
 
