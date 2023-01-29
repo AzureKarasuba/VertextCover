@@ -3,6 +3,12 @@ import re
 
 
 # YOUR CODE GOES HERE
+class Edge:
+    def __init__(self,end1, end2):
+        # datatype of end1 and end 2 is Vertex
+        self.end1 = end1
+        self.end2 = end2
+
 
 class Vertex:
 
@@ -138,7 +144,7 @@ def IntersectBetweenStreets(s1, s2):
         for sp2 in s2.getSP():
             intersection = checkIntersect(sp1, sp2)
             if intersection is not None:
-                print("type of intersection in IBS: " + str(type(intersection)))
+                # print("type of intersection in IBS: " + str(type(intersection)))
 
                 # v = Vertex(intersection)
                 sp1.addIntersect(intersection)
@@ -196,14 +202,14 @@ def main():
                         # add all vertices into temporary
                         for x in verticesInSP:
                             # type of x is Vertex!!!
-                            print("x type:" + str(type(x)))
+                            # print("x type:" + str(type(x)))
                             vertex = Vertex(x)
-                            print("vertex type:" + str(type(vertex.getCo())))
+                            # print("vertex type:" + str(type(vertex.getCo())))
                             vertex.addName(str(VNum))
                             VNum += 1
 
                             print("vertex :" + str(vertex.getCo()[0]) + " " + str(vertex.getCo()[1]))
-                            print("vertex type:" + str(type(vertex.getCo())))
+                            # print("vertex type:" + str(type(vertex.getCo())))
                             print("vertex between ends: name is " + str(vertex.getName()) + " co is: " + str(vertex.getCo()))
                             vTemp.append(vertex)
 
@@ -222,30 +228,37 @@ def main():
                         # vertical line
                         if sp.end1[0] == sp.end2[0]:
                             # sort all vertices by second number
+                            print("vertical!\n")
                             sorted(vTemp, key=lambda v: v.getCo()[1])
                         # horizontal line
                         elif sp.end1[1] == sp.end2[1]:
+                            print("horizontal!\n")
                             # sort all vertices by first number
                             sorted(vTemp, key=lambda v: v.getCo()[0])
                         else:
+                            print("slope!\n")
                             sorted(vTemp, key=lambda v: v.getCo()[1])
 
+
+
                             # loop until the second last vertex
-                        for i in range(len(vTemp) - 2):
+                        for i in range(len(vTemp) - 1):
                             e = [vTemp[i].getName(), vTemp[i + 1].getName()]
-                            edges += e
+                            edges.append(e)
+                            print(type(e))
+                            print("e: " + str(e))
                         vertices += vTemp
 
             print("Vertices:{\n")
             print("length of vertices: " + str(len(vertices)))
             for v in vertices:
-                print("\ntype of v is: " + str(type(v)))
+                # print("\ntype of v is: " + str(type(v)))
                 print(v.getName() + ": " + str(v.getCo()) + ",\n")
             print("}\n")
 
             print("Edges:{\n")
             for e in edges:
-                print(e[0] + e[1] + ",\n")
+                print(str(e) + ",\n")
             print("}\n")
             break
         else:
