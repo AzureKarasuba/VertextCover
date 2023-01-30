@@ -170,9 +170,17 @@ def main():
         command = line[0]
 
         if command == "g":
+
+            print("num of st: " + str(len(streets)))
             # calculate vertices
+
             vertices = []
             edges = []
+
+            for s in streets:
+                for sp in s.getSP():
+                    # get all intersections cleared
+                    sp.intersect = []
 
             for i in range(len(streets) - 1):
                 # check intersections between two streets
@@ -182,6 +190,7 @@ def main():
                 for sp in s.getSP():
                     verticesInSP = sp.intersect
                     # if there are not any intersections on sp
+                    '''
                     if not verticesInSP:
                         print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there isn't any intersection")
                         v_left = Vertex(sp.end1)
@@ -200,7 +209,8 @@ def main():
 
                         vertices.append(v_left)
                         vertices.append(v_right)
-                    else:
+                    '''
+                    if verticesInSP:
                         print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
                             len(verticesInSP)) + " intersection")
                         vTemp = []
@@ -250,20 +260,28 @@ def main():
                                 if v.getCo() == v_target.getCo():
                                     v.name = v_target.name
 
+
+                        '''
                         new_sorted = []
+                        new_co = []
                         for i in range(len(v_sorted) - 1):
-                            if v_sorted[i].getCo()
+                            if v_sorted[i].getCo() not in new_co:
+                                new_co.append(v_sorted[i].getCo())
+                                new_sorted.append(v_sorted[i])
+                        v_sorted = new_sorted
+                        '''
 
                             # loop until the second last vertex
                         for i in range(len(v_sorted) - 1):
-                            e = [v_sorted[i].getName(), v_sorted[i + 1].getName()]
-                            print ("There is an edge between " +
+                            if(v_sorted[i].getCo() != v_sorted[i+1].getCo()):
+                                e = [v_sorted[i].getName(), v_sorted[i + 1].getName()]
+                                print ("There is an edge between " +
                                    str(v_sorted[i].getName()) + " with co of: "+str(v_sorted[i].getCo()) + " and " +
                                    str(v_sorted[i + 1].getName()) + " with co of: " + str(v_sorted[i + 1].getCo()))
 
-                            edges.append(e)
-                            print(type(e))
-                            print("e: " + str(e))
+                                edges.append(e)
+                                print(type(e))
+                                print("e: " + str(e))
                         print("end!\n\n")
                         vertices += v_sorted
 
@@ -281,7 +299,6 @@ def main():
             for e in edges:
                 print(str(e) + ",\n")
             print("}\n")
-            break
         else:
             m = re.search(r'"([^"]*)"', line)
             streetName = ""
