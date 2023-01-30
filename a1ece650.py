@@ -188,12 +188,17 @@ def main():
                         v_left.addName(str(VNum))
                         VNum += 1
 
-                        vertices.append(v_left)
-
                         v_right = Vertex(sp.end2)
                         v_right.addName(str(VNum))
                         VNum += 1
 
+                        for v_target in vertices:
+                            if v_left.getCo() == v_target.getCo():
+                                v_left.name = v_target.name
+                            if v_right.getCo() == v_target.getCo():
+                                v_right.name = v_target.name
+
+                        vertices.append(v_left)
                         vertices.append(v_right)
                     else:
                         print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
@@ -229,31 +234,47 @@ def main():
                         if sp.end1[0] == sp.end2[0]:
                             # sort all vertices by second number
                             print("vertical!\n")
-                            sorted(vTemp, key=lambda v: v.getCo()[1])
+                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
                         # horizontal line
                         elif sp.end1[1] == sp.end2[1]:
                             print("horizontal!\n")
                             # sort all vertices by first number
-                            sorted(vTemp, key=lambda v: v.getCo()[0])
+                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[0])
                         else:
                             print("slope!\n")
-                            sorted(vTemp, key=lambda v: v.getCo()[1])
+                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
 
+                        # if any vertex in vTemp is the same as previous, change is name
+                        for v_target in vertices:
+                            for v in v_sorted:
+                                if v.getCo() == v_target.getCo():
+                                    v.name = v_target.name
 
+                        new_sorted = []
+                        for i in range(len(v_sorted) - 1):
+                            if v_sorted[i].getCo()
 
                             # loop until the second last vertex
-                        for i in range(len(vTemp) - 1):
-                            e = [vTemp[i].getName(), vTemp[i + 1].getName()]
+                        for i in range(len(v_sorted) - 1):
+                            e = [v_sorted[i].getName(), v_sorted[i + 1].getName()]
+                            print ("There is an edge between " +
+                                   str(v_sorted[i].getName()) + " with co of: "+str(v_sorted[i].getCo()) + " and " +
+                                   str(v_sorted[i + 1].getName()) + " with co of: " + str(v_sorted[i + 1].getCo()))
+
                             edges.append(e)
                             print(type(e))
                             print("e: " + str(e))
-                        vertices += vTemp
+                        print("end!\n\n")
+                        vertices += v_sorted
 
             print("Vertices:{\n")
             print("length of vertices: " + str(len(vertices)))
+            v_printedIndex = []
             for v in vertices:
+                if int(v.getName()) not in v_printedIndex:
+                    print(v.getName() + ": " + str(v.getCo()) + ",\n")
+                    v_printedIndex.append(int(v.getName()))
                 # print("\ntype of v is: " + str(type(v)))
-                print(v.getName() + ": " + str(v.getCo()) + ",\n")
             print("}\n")
 
             print("Edges:{\n")
@@ -335,8 +356,6 @@ def main():
             print('read a line:', line)
     print('Finished reading input')
 
-    for x in vertices:
-        print(x)
     # sp1 = StreetPart((0,0), (0,10))
     # sp2 = StreetPart((4,2), (4,8))
 
