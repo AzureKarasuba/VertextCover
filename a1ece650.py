@@ -169,208 +169,225 @@ def main():
         line = sys.stdin.readline()
         command = line[0]
 
-        if command == "g":
+        try:
+            #no space between command and street name
+            if len(line.split()[0]) != 1:
+                raise Exception("missing space between command")
 
-            print("num of st: " + str(len(streets)))
-            # calculate vertices
+            if command == "g":
 
-            vertices = []
-            edges = []
+                print("num of st: " + str(len(streets)))
+                # calculate vertices
 
-            for s in streets:
-                for sp in s.getSP():
-                    # get all intersections cleared
-                    sp.intersect = []
+                vertices = []
+                edges = []
 
-            for i in range(len(streets) - 1):
-                # check intersections between two streets
-                IntersectBetweenStreets(streets[i], streets[i + 1])
+                for s in streets:
+                    for sp in s.getSP():
+                        # get all intersections cleared
+                        sp.intersect = []
 
-            for s in streets:
-                for sp in s.getSP():
-                    verticesInSP = sp.intersect
-                    # if there are not any intersections on sp
-                    '''
-                    if not verticesInSP:
-                        print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there isn't any intersection")
-                        v_left = Vertex(sp.end1)
-                        v_left.addName(str(VNum))
-                        VNum += 1
+                for i in range(len(streets) - 1):
+                    # check intersections between two streets
+                    IntersectBetweenStreets(streets[i], streets[i + 1])
 
-                        v_right = Vertex(sp.end2)
-                        v_right.addName(str(VNum))
-                        VNum += 1
-
-                        for v_target in vertices:
-                            if v_left.getCo() == v_target.getCo():
-                                v_left.name = v_target.name
-                            if v_right.getCo() == v_target.getCo():
-                                v_right.name = v_target.name
-
-                        vertices.append(v_left)
-                        vertices.append(v_right)
-                    '''
-                    if verticesInSP:
-                        print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
-                            len(verticesInSP)) + " intersection")
-                        vTemp = []
-                        # add all vertices into temporary
-                        for x in verticesInSP:
-                            # type of x is Vertex!!!
-                            # print("x type:" + str(type(x)))
-                            vertex = Vertex(x)
-                            # print("vertex type:" + str(type(vertex.getCo())))
-                            vertex.addName(str(VNum))
+                for s in streets:
+                    for sp in s.getSP():
+                        verticesInSP = sp.intersect
+                        # if there are not any intersections on sp
+                        '''
+                        if not verticesInSP:
+                            print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there isn't any intersection")
+                            v_left = Vertex(sp.end1)
+                            v_left.addName(str(VNum))
                             VNum += 1
-
-                            print("vertex :" + str(vertex.getCo()[0]) + " " + str(vertex.getCo()[1]))
-                            # print("vertex type:" + str(type(vertex.getCo())))
-                            print("vertex between ends: name is " + str(vertex.getName()) + " co is: " + str(vertex.getCo()))
-                            vTemp.append(vertex)
-
-                        v_left = Vertex(sp.end1)
-                        v_left.addName(str(VNum))
-                        VNum += 1
-                        vTemp.append(v_left)
-                        print("vertex of end1 is " + str(v_left.getName()) + "co is: " + str(v_left.getCo()))
-
-                        v_right = Vertex(sp.end2)
-                        v_right.addName(str(VNum))
-                        VNum += 1
-                        vTemp.append(v_right)
-                        print("vertex of end2 is " + str(v_right.getName()) + "co is: " + str(v_right.getCo()))
-
-                        # vertical line
-                        if sp.end1[0] == sp.end2[0]:
-                            # sort all vertices by second number
-                            print("vertical!\n")
-                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
-                        # horizontal line
-                        elif sp.end1[1] == sp.end2[1]:
-                            print("horizontal!\n")
-                            # sort all vertices by first number
-                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[0])
-                        else:
-                            print("slope!\n")
-                            v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
-
-                        # if any vertex in vTemp is the same as previous, change is name
-                        for v_target in vertices:
-                            for v in v_sorted:
-                                if v.getCo() == v_target.getCo():
-                                    v.name = v_target.name
-
-
+    
+                            v_right = Vertex(sp.end2)
+                            v_right.addName(str(VNum))
+                            VNum += 1
+    
+                            for v_target in vertices:
+                                if v_left.getCo() == v_target.getCo():
+                                    v_left.name = v_target.name
+                                if v_right.getCo() == v_target.getCo():
+                                    v_right.name = v_target.name
+    
+                            vertices.append(v_left)
+                            vertices.append(v_right)
                         '''
-                        new_sorted = []
-                        new_co = []
-                        for i in range(len(v_sorted) - 1):
-                            if v_sorted[i].getCo() not in new_co:
-                                new_co.append(v_sorted[i].getCo())
-                                new_sorted.append(v_sorted[i])
-                        v_sorted = new_sorted
-                        '''
+                        if verticesInSP:
+                            print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
+                                len(verticesInSP)) + " intersection")
+                            vTemp = []
+                            # add all vertices into temporary
+                            for x in verticesInSP:
+                                # type of x is Vertex!!!
+                                # print("x type:" + str(type(x)))
+                                vertex = Vertex(x)
+                                # print("vertex type:" + str(type(vertex.getCo())))
+                                vertex.addName(str(VNum))
+                                VNum += 1
 
-                            # loop until the second last vertex
-                        for i in range(len(v_sorted) - 1):
-                            if(v_sorted[i].getCo() != v_sorted[i+1].getCo()):
-                                e = [v_sorted[i].getName(), v_sorted[i + 1].getName()]
-                                print ("There is an edge between " +
-                                   str(v_sorted[i].getName()) + " with co of: "+str(v_sorted[i].getCo()) + " and " +
-                                   str(v_sorted[i + 1].getName()) + " with co of: " + str(v_sorted[i + 1].getCo()))
+                                print("vertex :" + str(vertex.getCo()[0]) + " " + str(vertex.getCo()[1]))
+                                # print("vertex type:" + str(type(vertex.getCo())))
+                                print("vertex between ends: name is " + str(vertex.getName()) + " co is: " + str(vertex.getCo()))
+                                vTemp.append(vertex)
 
-                                edges.append(e)
-                                print(type(e))
-                                print("e: " + str(e))
-                        print("end!\n\n")
-                        vertices += v_sorted
+                            v_left = Vertex(sp.end1)
+                            v_left.addName(str(VNum))
+                            VNum += 1
+                            vTemp.append(v_left)
+                            print("vertex of end1 is " + str(v_left.getName()) + "co is: " + str(v_left.getCo()))
 
-            print("Vertices:{\n")
-            print("length of vertices: " + str(len(vertices)))
-            v_printedIndex = []
-            for v in vertices:
-                if int(v.getName()) not in v_printedIndex:
-                    print(v.getName() + ": " + str(v.getCo()) + ",\n")
-                    v_printedIndex.append(int(v.getName()))
-                # print("\ntype of v is: " + str(type(v)))
-            print("}\n")
+                            v_right = Vertex(sp.end2)
+                            v_right.addName(str(VNum))
+                            VNum += 1
+                            vTemp.append(v_right)
+                            print("vertex of end2 is " + str(v_right.getName()) + "co is: " + str(v_right.getCo()))
 
-            print("Edges:{\n")
-            for e in edges:
-                print(str(e) + ",\n")
-            print("}\n")
-        else:
-            m = re.search(r'"([^"]*)"', line)
-            streetName = ""
+                            # vertical line
+                            if sp.end1[0] == sp.end2[0]:
+                                # sort all vertices by second number
+                                print("vertical!\n")
+                                v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
+                            # horizontal line
+                            elif sp.end1[1] == sp.end2[1]:
+                                print("horizontal!\n")
+                                # sort all vertices by first number
+                                v_sorted = sorted(vTemp, key=lambda v: v.getCo()[0])
+                            else:
+                                print("slope!\n")
+                                v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
 
-            if m:
-                streetName = m.group(1)
-                print("Street Name is " + streetName)
+                            # if any vertex in vTemp is the same as previous, change is name
+                            for v_target in vertices:
+                                for v in v_sorted:
+                                    if v.getCo() == v_target.getCo():
+                                        v.name = v_target.name
 
-            print("Street Name is now " + streetName)
 
-            if (command == 'r'):
-                print("entered R!")
+                            '''
+                            new_sorted = []
+                            new_co = []
+                            for i in range(len(v_sorted) - 1):
+                                if v_sorted[i].getCo() not in new_co:
+                                    new_co.append(v_sorted[i].getCo())
+                                    new_sorted.append(v_sorted[i])
+                            v_sorted = new_sorted
+                            '''
 
-                targetStreet = None
-                for x in streets:
-                    if x.name == streetName:
-                        targetStreet = x
-                        break
+                                # loop until the second last vertex
+                            for i in range(len(v_sorted) - 1):
+                                if(v_sorted[i].getCo() != v_sorted[i+1].getCo()):
+                                    e = [v_sorted[i].getName(), v_sorted[i + 1].getName()]
+                                    print ("There is an edge between " +
+                                       str(v_sorted[i].getName()) + " with co of: "+str(v_sorted[i].getCo()) + " and " +
+                                       str(v_sorted[i + 1].getName()) + " with co of: " + str(v_sorted[i + 1].getCo()))
 
-                # vertices = removeVertices(vertices, targetStreet)
-                streets = removeStreet(streets, streetName)
+                                    edges.append(e)
+                                    print(type(e))
+                                    print("e: " + str(e))
+                            print("end!\n\n")
+                            vertices += v_sorted
+
+                print("Vertices:{\n")
+                print("length of vertices: " + str(len(vertices)))
+                v_printedIndex = []
+                for v in vertices:
+                    if int(v.getName()) not in v_printedIndex:
+                        print(v.getName() + ": " + str(v.getCo()) + ",\n")
+                        v_printedIndex.append(int(v.getName()))
+                    # print("\ntype of v is: " + str(type(v)))
+                print("}\n")
+
+                print("Edges:{\n")
+                for e in edges:
+                    print(str(e) + ",\n")
+                print("}\n")
             else:
-                # add or change streets
-                lineWithoutName = line.split("\"" + streetName + "\"")
-                coordinates = lineWithoutName[1].split()
+                m = re.search(r'"([^"]*)"', line)
+                streetName = ""
+
+                if m:
+                    streetName = m.group(1)
+                    print("Street Name is " + streetName)
+                else:
+                    raise Exception("missing quotation marks")
+
+                # no space between street name and coordinate
+                if line[len(m.group(1)) + 4] == "(":
+                    raise Exception("missing space after street name")
+
+                print("Street Name is now " + streetName)
+
+                coordinates = re.findall(r'\(.*?\)', line)
                 print(coordinates)
 
-                if command == 'a':
-                    print("entered A!")
-                    s = Street(streetName)
+                if (command == 'r'):
+                    print("entered R!")
 
-                    # all points except for the last one
-                    for x in coordinates[:-1]:
-                        sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
-                        s.append(sp)
+                    if coordinates:
+                        raise Exception("invalid input: redundant coordinates")
 
-                        # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(x)))
-                        # VNum += 1
-
-                    # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(coordinates[-1])))
-                    # VNum += 1
-                    streets.append(s)
-
-                elif command == 'c':
-                    print("entered C!")
-
-                    '''
                     targetStreet = None
                     for x in streets:
                         if x.name == streetName:
                             targetStreet = x
                             break
-                    '''
 
                     # vertices = removeVertices(vertices, targetStreet)
                     streets = removeStreet(streets, streetName)
+                else:
+                    # add or change streets
+                    lineWithoutName = line.split("\"" + streetName + "\"")
 
-                    if (streets == []):
-                        print("\nStreets is now empty!\n")
-                    # the street to be modified
-                    s = Street(streetName)
-                    for x in coordinates[:-1]:
-                        sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
-                        s.append(sp)
-                        # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(x)))
+                    if command == 'a':
+                        print("entered A!")
+                        s = Street(streetName)
+
+                        # all points except for the last one
+                        for x in coordinates[:-1]:
+                            sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
+                            s.append(sp)
+
+                            # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(x)))
+                            # VNum += 1
+
+                        # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(coordinates[-1])))
                         # VNum += 1
+                        streets.append(s)
 
-                    # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(coordinates[-1])))
-                    # VNum += 1
-                    streets.append(s)
+                    elif command == 'c':
+                        print("entered C!")
 
-            print('read a line:', line)
+                        '''
+                        targetStreet = None
+                        for x in streets:
+                            if x.name == streetName:
+                                targetStreet = x
+                                break
+                        '''
+
+                        # vertices = removeVertices(vertices, targetStreet)
+                        streets = removeStreet(streets, streetName)
+
+                        if (streets == []):
+                            print("\nStreets is now empty!\n")
+                        # the street to be modified
+                        s = Street(streetName)
+                        for x in coordinates[:-1]:
+                            sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
+                            s.append(sp)
+                            # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(x)))
+                            # VNum += 1
+
+                        # vertices.append(Vertex(str("V" + str(VNum)), turnToTuple(coordinates[-1])))
+                        # VNum += 1
+                        streets.append(s)
+
+                print('read a line:', line)
+        except Exception as e:
+            print("Error: " + str(e))
     print('Finished reading input')
 
     # sp1 = StreetPart((0,0), (0,10))
