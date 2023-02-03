@@ -1,20 +1,33 @@
-from unittest.mock import patch
+import builtins
 import unittest
 
-import mock.mock
-import pytest
-import test
 import a1ece650
 
 
-class MyTestCase(unittest.TestCase):
 
-    def test_command_r(self):
-        with pytest.raises(Exception) as e:
-            with mock.patch('builtins.input', return_value="r \"A S\" (1,2)"):
-                a1ece650.main()
-                assert "invalid input: redundant coordinates for command r" in str(e.value)
+def test_checkIntersect_1():
+    s1 = a1ece650.StreetPart((0, 0), (5, 0))
+    s2 = a1ece650.StreetPart((5, 0), (5, 5))
+    result = a1ece650.checkIntersect(s1, s2)
+    assert result == (5.0, 0.0)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_checkIntersect_2():
+    s1 = a1ece650.StreetPart((0, 0), (4, 0))
+    s2 = a1ece650.StreetPart((5, 0), (5, 5))
+    result = a1ece650.checkIntersect(s1, s2)
+    assert result is None
+
+
+def test_checkIntersect_3():
+    s1 = a1ece650.StreetPart((0, 0), (4, 0))
+    s2 = a1ece650.StreetPart((5, 4), (4, 4))
+    result = a1ece650.checkIntersect(s1, s2)
+    assert result is None
+
+
+def test_checkIntersect_4():
+    s1 = a1ece650.StreetPart((0, 0), (4, 0))
+    s2 = a1ece650.StreetPart((4, 0), (8, 0))
+    result = a1ece650.checkIntersect(s1, s2)
+    assert result is (4, 0)

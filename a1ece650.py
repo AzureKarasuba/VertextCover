@@ -118,11 +118,6 @@ def checkIntersect(sp1, sp2):
 
     # if parallel
     if denominator == 0:
-        print("entered")
-        print("sp1 end1: " + str(sp1.end1))
-        print("sp1 end2: " + str(sp1.end2))
-        print("sp2 end1: " + str(sp2.end1))
-        print("sp2 end2: " + str(sp2.end2))
 
         if(sp1.end1 == sp2.end1 and sp1.end2 == sp2.end2) or (sp1.end1 == sp2.end2 and sp1.end2 == sp2.end1):
             return None
@@ -148,23 +143,21 @@ def checkIntersect(sp1, sp2):
     # sp1.addIntersect(intersection)
     # sp2.addIntersect(intersection)
 
-    print("print calculated intersection: " + str(intersection))
-
     return intersection
 
 
 def IntersectBetweenStreets(s1, s2):
     intersectionList = []
     for sp1 in s1.getSP():
-        print("in IBS: sp1 is " + str(sp1.end1) + "," + str(sp1.end2))
+
         for sp2 in s2.getSP():
-            print("in IBS: sp2 is " + str(sp2.end1) + "," + str(sp2.end2))
+
             intersection = checkIntersect(sp1, sp2)
             if intersection is not None:
                 # print("type of intersection in IBS: " + str(type(intersection)))
 
                 # v = Vertex(intersection)
-                print("add an intersection: " + str(intersection) + "\n")
+
                 sp1.addIntersect(intersection)
                 sp2.addIntersect(intersection)
 
@@ -211,8 +204,7 @@ def main():
 
                 for i in range(len(streets) - 1):
                     # check intersections between two streets
-                    print("name of s1: " + streets[i].name)
-                    print("name of s2: " + streets[i+1].name)
+
                     IntersectBetweenStreets(streets[i], streets[i + 1])
                     #print(str(i))
 
@@ -243,8 +235,7 @@ def main():
                             vertices.append(v_right)
                         '''
                         if verticesInSP:
-                            print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
-                            len(verticesInSP)) + " intersection")
+
                             vTemp = []
                             # add all vertices into temporary
                             for x in verticesInSP:
@@ -346,7 +337,7 @@ def main():
                 right = line.count(")")
 
                 if left != right:
-                    raise Exception("missing brackets")
+                    raise Exception("missing or redundant brackets")
 
                 if m:
                     streetName = m.group(1)
@@ -396,11 +387,10 @@ def main():
                         raise Exception("No brackets")
 
                     if len(coordinates) != left:
-                        raise Exception("Missing brackets")
+                        raise Exception("Missing or redundant brackets")
 
                     if command == 'a':
-                        #print("entered A!")
-                        print("new street name: " + streetName)
+
                         s = Street(streetName)
 
                         for xs in streets:
@@ -419,20 +409,9 @@ def main():
                             s.append(sp)
 
                         streets.append(s)
-                        print(s.name + "\n")
-                        print(streets[0].name + "\n")
-                        print(streets[-1].name + "\n")
+
 
                     elif command == 'c':
-                        # print("entered C!")
-
-                        '''
-                        targetStreet = None
-                        for x in streets:
-                            if x.name == streetName:
-                                targetStreet = x
-                                break
-                        '''
 
                         # vertices = removeVertices(vertices, targetStreet)
 
