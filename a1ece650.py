@@ -115,7 +115,23 @@ def checkIntersect(sp1, sp2):
     sp2end2_y = sp2.end2[1]
 
     denominator = (sp2end2_y - sp2end1_y) * (sp1end2_x - sp1end1_x) - (sp2end2_x - sp2end1_x) * (sp1end2_y - sp1end1_y)
+
+    # if parallel
     if denominator == 0:
+        print("entered")
+        print("sp1 end1: " + str(sp1.end1))
+        print("sp1 end2: " + str(sp1.end2))
+        print("sp2 end1: " + str(sp2.end1))
+        print("sp2 end2: " + str(sp2.end2))
+
+        if(sp1.end1 == sp2.end1 and sp1.end2 == sp2.end2) or (sp1.end1 == sp2.end2 and sp1.end2 == sp2.end1):
+            return None
+
+        if sp1.end1 == sp2.end1 or sp1.end1 == sp2.end2:
+            return sp1.end1
+        elif sp1.end2 == sp2.end1 or sp1.end2 == sp2.end2:
+            return sp1.end2
+
         return None
 
     u_sp1 = ((sp2end2_x - sp2end1_x) * (sp1end1_y - sp2end1_y) - (sp2end2_y - sp2end1_y) * (
@@ -132,18 +148,23 @@ def checkIntersect(sp1, sp2):
     # sp1.addIntersect(intersection)
     # sp2.addIntersect(intersection)
 
+    print("print calculated intersection: " + str(intersection))
+
     return intersection
 
 
 def IntersectBetweenStreets(s1, s2):
     intersectionList = []
     for sp1 in s1.getSP():
+        print("in IBS: sp1 is " + str(sp1.end1) + "," + str(sp1.end2))
         for sp2 in s2.getSP():
+            print("in IBS: sp2 is " + str(sp2.end1) + "," + str(sp2.end2))
             intersection = checkIntersect(sp1, sp2)
             if intersection is not None:
                 # print("type of intersection in IBS: " + str(type(intersection)))
 
                 # v = Vertex(intersection)
+                print("add an intersection: " + str(intersection) + "\n")
                 sp1.addIntersect(intersection)
                 sp2.addIntersect(intersection)
 
@@ -163,11 +184,11 @@ def main():
     streets = []
     while True:
         line = sys.stdin.readline()
-        command = line[0]
+        command = line.split()[0]
 
         try:
             # no space between command and street name
-            if len(line.split()[0]) != 1:
+            if len(command) != 1:
                 raise Exception("missing space between command")
 
             if command == "g":
@@ -190,10 +211,15 @@ def main():
 
                 for i in range(len(streets) - 1):
                     # check intersections between two streets
+                    print("name of s1: " + streets[i].name)
+                    print("name of s2: " + streets[i+1].name)
                     IntersectBetweenStreets(streets[i], streets[i + 1])
+                    #print(str(i))
 
                 for s in streets:
+                    #print("entered new street!: " + s.name)
                     for sp in s.getSP():
+                        #print("entered new sp!")
                         verticesInSP = sp.intersect
                         # if there are not any intersections on sp
                         '''
@@ -217,8 +243,8 @@ def main():
                             vertices.append(v_right)
                         '''
                         if verticesInSP:
-                            # print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
-                            # len(verticesInSP)) + " intersection")
+                            print("between " + str(sp.end1) + " and " + str(sp.end2) + ", there is " + str(
+                            len(verticesInSP)) + " intersection")
                             vTemp = []
                             # add all vertices into temporary
                             for x in verticesInSP:
@@ -260,11 +286,21 @@ def main():
                                 # print("slope!\n")
                                 v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
 
+                            for i in range(len(v_sorted) - 1):
+                                if v_sorted[i+1].getCo() == v_sorted[i].getCo():
+                                    v_sorted[i+1].name = v_sorted[i].name
+
                             # if any vertex in vTemp is the same as previous, change is name
+                            #print("reached before here!")
                             for v_target in vertices:
+                                #print("reached in v_target loop!")
                                 for v in v_sorted:
+                                    #print("reached in v_sorted loop!")
+                                    #print("compare: " + str(v.getCo()) + " and " + str(v_target.getCo()))
                                     if v.getCo() == v_target.getCo():
+                                        #print("change name! to " + v_target.name)
                                         v.name = v_target.name
+                                    #print(v.name + str(v.getCo()))
 
                             '''
                             new_sorted = []
@@ -289,18 +325,28 @@ def main():
                 v_printedIndex = []
                 for v in vertices:
                     if int(v.getName()) not in v_printedIndex:
-                        print(" " + v.getName() + ": " + str(v.getCo()))
+                        print(" " + v.getName() + ":", end=' ')
+                        print('(' + '{0:.2f}'.format(v.getCo()[0]) + ','+'{0:.2f}'.format(v.getCo()[1])+')')
                         v_printedIndex.append(int(v.getName()))
                     # print("\ntype of v is: " + str(type(v)))
                 print("}")
 
                 print("E = {")
+                e_printedEdges = []
                 for e in edges:
-                    print(" <" + str(e[0]) + "," + str(e[1]) + ">,")
+                    if e not in e_printedEdges:
+                        print(" <" + str(e[0]) + "," + str(e[1]) + ">,")
+                        e_printedEdges.append(e)
                 print("}")
             else:
                 m = re.search(r'"([^"]*)"', line)
                 streetName = ""
+
+                left = line.count("(")
+                right = line.count(")")
+
+                if left != right:
+                    raise Exception("missing brackets")
 
                 if m:
                     streetName = m.group(1)
@@ -308,17 +354,25 @@ def main():
                 else:
                     raise Exception("missing quotation marks")
 
-                # no space between street name and coordinate
-                if line[len(m.group(1)) + 4] == "(":
-                    raise Exception("missing space after street name")
+                # check validity of streetName
+                check = streetName.replace(" ","")
+                if not all(char.isalpha() for char in check):
+                    raise Exception("invalid street name.")
 
                 # print("Street Name is now " + streetName)
 
                 coordinates = re.findall(r'\(.*?\)', line)
                 # print(coordinates)
 
-                if (command == 'r'):
+                if command == 'r':
                     # print("entered R!")
+
+                    found = 0
+                    for s in streets:
+                        if s.name == streetName:
+                            found = 1
+                    if not found:
+                        raise Exception("invalid input: Street not found.")
 
                     if coordinates:
                         raise Exception("invalid input: redundant coordinates for command r")
@@ -335,9 +389,23 @@ def main():
                     # add or change streets
                     lineWithoutName = line.split("\"" + streetName + "\"")
 
+                    if line.count("\"(") > 0:
+                        raise Exception("missing space after street name")
+
+                    if left == 0:
+                        raise Exception("No brackets")
+
+                    if len(coordinates) != left:
+                        raise Exception("Missing brackets")
+
                     if command == 'a':
-                        # print("entered A!")
+                        #print("entered A!")
+                        print("new street name: " + streetName)
                         s = Street(streetName)
+
+                        for xs in streets:
+                            if xs.name == streetName:
+                                raise Exception("invalid input: Street exists.")
 
                         if len(coordinates) < 2:
                             raise Exception("invalid input: a street has at lease two vertices.")
@@ -351,6 +419,9 @@ def main():
                             s.append(sp)
 
                         streets.append(s)
+                        print(s.name + "\n")
+                        print(streets[0].name + "\n")
+                        print(streets[-1].name + "\n")
 
                     elif command == 'c':
                         # print("entered C!")
