@@ -393,7 +393,9 @@ def main():
                         raise Exception("Missing or redundant brackets")
 
                     for c in coordinates:
-                        if len(c) != 2:
+                        x = turnToTuple(c)
+                        print(len(x))
+                        if len(x) != 2:
                             raise Exception("invalid vertex")
 
                     if command == 'a':
