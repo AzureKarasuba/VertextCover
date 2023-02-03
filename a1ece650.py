@@ -392,6 +392,10 @@ def main():
                     if len(coordinates) != left:
                         raise Exception("Missing or redundant brackets")
 
+                    for c in coordinates:
+                        if len(c) != 2:
+                            raise Exception("invalid vertex")
+
                     if command == 'a':
 
                         s = Street(streetName)
