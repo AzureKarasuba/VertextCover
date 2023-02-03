@@ -343,7 +343,12 @@ def main():
                     streetName = m.group(1)
                     # print("Street Name is " + streetName)
                 else:
-                    raise Exception("missing quotation marks")
+                    if line.count("\"") == 0:
+                        raise Exception("missing street name")
+                    else:
+                        raise Exception("missing quotation marks")
+
+
 
                 if line.count("\"") > 2:
                     raise Exception("redundant quotation marks")
