@@ -394,7 +394,6 @@ def main():
 
                     for c in coordinates:
                         x = turnToTuple(c)
-                        print(len(x))
                         if len(x) != 2:
                             raise Exception("invalid vertex")
 
