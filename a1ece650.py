@@ -345,6 +345,9 @@ def main():
                 else:
                     raise Exception("missing quotation marks")
 
+                if line.count("\"") > 2:
+                    raise Exception("redundant quotation marks")
+
                 # check validity of streetName
                 check = streetName.replace(" ","")
                 if not all(char.isalpha() for char in check):
