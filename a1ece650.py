@@ -103,6 +103,14 @@ def turnToTuple(stringName):
     return tuple(map(int, number))
 
 
+def checkOnSegment(a, b, c):
+    if (a[0] - b[0]) * (c[1] - b[1]) == (c[0] - b[0]) * (a[1] - b[1]):
+        if a[0] <= c[0] <= b[0] or a[0] >= c[0] >= b[0]:
+            return c
+    else:
+        return None
+
+
 def checkIntersect(sp1, sp2):
     sp1end1_x = sp1.end1[0]
     sp1end1_y = sp1.end1[1]
@@ -119,13 +127,36 @@ def checkIntersect(sp1, sp2):
     # if parallel
     if denominator == 0:
 
-        if(sp1.end1 == sp2.end1 and sp1.end2 == sp2.end2) or (sp1.end1 == sp2.end2 and sp1.end2 == sp2.end1):
+        if (sp1.end1 == sp2.end1 and sp1.end2 == sp2.end2) or (sp1.end1 == sp2.end2 and sp1.end2 == sp2.end1):
             return None
-
+        '''
         if sp1.end1 == sp2.end1 or sp1.end1 == sp2.end2:
             return sp1.end1
         elif sp1.end2 == sp2.end1 or sp1.end2 == sp2.end2:
             return sp1.end2
+        '''
+
+        if checkOnSegment(sp1.end1, sp1.end2, sp2.end1) and checkOnSegment(sp1.end1, sp1.end2, sp2.end2):
+            return [sp2.end1, sp2.end2]
+        elif checkOnSegment(sp2.end1, sp2.end2, sp1.end1) and checkOnSegment(sp2.end1, sp2.end2, sp1.end2):
+            return [sp1.end1, sp1.end2]
+        elif checkOnSegment(sp1.end1, sp1.end2, sp2.end1) and checkOnSegment(sp2.end1, sp2.end2, sp1.end2):
+            return [sp2.end1, sp1.end2]
+        elif checkOnSegment(sp1.end1, sp1.end2, sp2.end1) and checkOnSegment(sp2.end1, sp2.end2, sp1.end1):
+            return [sp2.end1, sp1.end1]
+        elif checkOnSegment(sp1.end1, sp1.end2, sp2.end2) and checkOnSegment(sp2.end1, sp2.end2, sp1.end2):
+            return [sp2.end2, sp1.end2]
+        elif checkOnSegment(sp1.end1, sp1.end2, sp2.end2) and checkOnSegment(sp2.end1, sp2.end2, sp1.end1):
+            return [sp2.end2, sp1.end1]
+
+        elif checkOnSegment(sp2.end1, sp2.end2, sp1.end1) and checkOnSegment(sp1.end1, sp1.end2, sp2.end1):
+            return [sp1.end1, sp2.end1]
+        elif checkOnSegment(sp2.end1, sp2.end2, sp1.end1) and checkOnSegment(sp1.end1, sp1.end2, sp2.end2):
+            return [sp1.end1, sp2.end2]
+        elif checkOnSegment(sp2.end1, sp2.end2, sp1.end2) and checkOnSegment(sp1.end1, sp1.end2, sp2.end1):
+            return [sp1.end2, sp2.end1]
+        elif checkOnSegment(sp2.end1, sp2.end2, sp1.end2) and checkOnSegment(sp1.end1, sp1.end2, sp2.end2):
+            return [sp1.end2, sp2.end2]
 
         return None
 
@@ -157,9 +188,19 @@ def IntersectBetweenStreets(s1, s2):
                 # print("type of intersection in IBS: " + str(type(intersection)))
 
                 # v = Vertex(intersection)
+                if type(intersection) == list:
+                    sp1.addIntersect(intersection[0])
+                    sp1.addIntersect(intersection[1])
 
-                sp1.addIntersect(intersection)
-                sp2.addIntersect(intersection)
+                    sp2.addIntersect(intersection[0])
+                    sp2.addIntersect(intersection[1])
+
+                else:
+                    sp1.addIntersect(intersection)
+                    sp2.addIntersect(intersection)
+
+                    # print("add: " + str(intersection) + " to sp1")
+                    # print("add: " + str(intersection) + " to sp2")
 
                 intersectionList.append(intersection)
 
@@ -184,6 +225,9 @@ def main():
             if len(command) != 1:
                 raise Exception("missing space between command")
 
+            if command != "g" and command != "r" and command != "a" and command != "c":
+                raise Exception("Error: Incorrect input format")
+
             if command == "g":
 
                 VNum = 0
@@ -202,16 +246,15 @@ def main():
                         # get all intersections cleared
                         sp.intersect = []
 
-                for i in range(len(streets) - 1):
+                for i in range(len(streets)):
                     # check intersections between two streets
-
-                    IntersectBetweenStreets(streets[i], streets[i + 1])
-                    #print(str(i))
+                    for j in range(i):
+                        IntersectBetweenStreets(streets[i], streets[j])
 
                 for s in streets:
-                    #print("entered new street!: " + s.name)
+                    # print("entered new street!: " + s.name)
                     for sp in s.getSP():
-                        #print("entered new sp!")
+                        # print("entered new sp!")
                         verticesInSP = sp.intersect
                         # if there are not any intersections on sp
                         '''
@@ -278,20 +321,20 @@ def main():
                                 v_sorted = sorted(vTemp, key=lambda v: v.getCo()[1])
 
                             for i in range(len(v_sorted) - 1):
-                                if v_sorted[i+1].getCo() == v_sorted[i].getCo():
-                                    v_sorted[i+1].name = v_sorted[i].name
+                                if v_sorted[i + 1].getCo() == v_sorted[i].getCo():
+                                    v_sorted[i + 1].name = v_sorted[i].name
 
                             # if any vertex in vTemp is the same as previous, change is name
-                            #print("reached before here!")
+                            # print("reached before here!")
                             for v_target in vertices:
-                                #print("reached in v_target loop!")
+                                # print("reached in v_target loop!")
                                 for v in v_sorted:
-                                    #print("reached in v_sorted loop!")
-                                    #print("compare: " + str(v.getCo()) + " and " + str(v_target.getCo()))
+                                    # print("reached in v_sorted loop!")
+                                    # print("compare: " + str(v.getCo()) + " and " + str(v_target.getCo()))
                                     if v.getCo() == v_target.getCo():
-                                        #print("change name! to " + v_target.name)
+                                        # print("change name! to " + v_target.name)
                                         v.name = v_target.name
-                                    #print(v.name + str(v.getCo()))
+                                    # print(v.name + str(v.getCo()))
 
                             '''
                             new_sorted = []
@@ -316,8 +359,8 @@ def main():
                 v_printedIndex = []
                 for v in vertices:
                     if int(v.getName()) not in v_printedIndex:
-                        print(" " + v.getName() + ":", end=' ')
-                        print('(' + '{0:.2f}'.format(v.getCo()[0]) + ','+'{0:.2f}'.format(v.getCo()[1])+')')
+                        print("  " + v.getName() + ":", end=' ')
+                        print(' (' + '{0:.2f}'.format(v.getCo()[0]) + ',' + '{0:.2f}'.format(v.getCo()[1]) + ')')
                         v_printedIndex.append(int(v.getName()))
                     # print("\ntype of v is: " + str(type(v)))
                 print("}")
@@ -326,8 +369,13 @@ def main():
                 e_printedEdges = []
                 for e in edges:
                     if e not in e_printedEdges:
-                        print(" <" + str(e[0]) + "," + str(e[1]) + ">,")
+                        print("  <" + str(e[0]) + "," + str(e[1]) + ">", end='')
                         e_printedEdges.append(e)
+
+                        if edges.index(e) != len(edges) - 1:
+                            print(",")
+                        else:
+                            print("\n", end='')
                 print("}")
             else:
                 m = re.search(r'"([^"]*)"', line)
@@ -348,13 +396,11 @@ def main():
                     else:
                         raise Exception("missing quotation marks")
 
-
-
                 if line.count("\"") > 2:
                     raise Exception("redundant quotation marks")
 
                 # check validity of streetName
-                check = streetName.replace(" ","")
+                check = streetName.replace(" ", "")
                 if not all(char.isalpha() for char in check):
                     raise Exception("invalid street name.")
 
@@ -368,7 +414,7 @@ def main():
 
                     found = 0
                     for s in streets:
-                        if s.name == streetName:
+                        if s.name == streetName.lower():
                             found = 1
                     if not found:
                         raise Exception("invalid input: Street not found.")
@@ -378,12 +424,12 @@ def main():
 
                     targetStreet = None
                     for x in streets:
-                        if x.name == streetName:
+                        if x.name == streetName.lower():
                             targetStreet = x
                             break
 
                     # vertices = removeVertices(vertices, targetStreet)
-                    streets = removeStreet(streets, streetName)
+                    streets = removeStreet(streets, streetName.lower())
                 else:
                     # add or change streets
                     lineWithoutName = line.split("\"" + streetName + "\"")
@@ -404,10 +450,10 @@ def main():
 
                     if command == 'a':
 
-                        s = Street(streetName)
+                        s = Street(streetName.lower())
 
                         for xs in streets:
-                            if xs.name == streetName:
+                            if xs.name == streetName.lower():
                                 raise Exception("invalid input: Street exists.")
 
                         if len(coordinates) < 2:
@@ -436,15 +482,15 @@ def main():
 
                         found = 0
                         for x in streets:
-                            if x.name == streetName:
+                            if x.name == streetName.lower():
                                 found = 1
                         if found == 0:
                             raise Exception("Street not found.")
 
-                        streets = removeStreet(streets, streetName)
+                        streets = removeStreet(streets, streetName.lower())
 
                         # the street to be modified
-                        s = Street(streetName)
+                        s = Street(streetName.lower())
                         for x in coordinates[:-1]:
                             sp = StreetPart(turnToTuple(x), turnToTuple(coordinates[coordinates.index(x) + 1]))
                             s.append(sp)
